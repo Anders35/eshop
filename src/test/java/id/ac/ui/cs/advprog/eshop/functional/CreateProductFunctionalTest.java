@@ -40,7 +40,7 @@ class CreateProductFunctionalTest {
     }
 
     @Test
-    void createProduct_isSuccessful(ChromeDriver driver) throws Exception {
+    void createProduct_isSuccessful(ChromeDriver driver) {
         // Navigate
         driver.get(baseUrl + "/product/create");
 
