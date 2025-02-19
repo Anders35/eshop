@@ -22,10 +22,6 @@ class ProductServiceTest {
     @InjectMocks
     private ProductServiceImpl productService;
 
-    @BeforeEach
-    void setUp() {
-    }
-
     @Test
     void testCreate() {
         Product product = new Product();
