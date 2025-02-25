@@ -63,8 +63,13 @@ public class ProductController {
 @Controller
 @RequestMapping("/car")
 class CarController extends ProductController {
+    private final CarServiceImpl carservice;
+
     @Autowired
-    private CarServiceImpl carservice;
+    public CarController(ProductService service, CarServiceImpl carservice) {
+        super(service);
+        this.carservice = carservice;
+    }
 
     @GetMapping("/createCar")
     public String createCarPage(Model model) {
