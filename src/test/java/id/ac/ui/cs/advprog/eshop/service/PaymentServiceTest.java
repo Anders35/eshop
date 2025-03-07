@@ -4,6 +4,7 @@ import id.ac.ui.cs.advprog.eshop.model.Order;
 import id.ac.ui.cs.advprog.eshop.model.Payment;
 import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
+import enums.PaymentStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -35,7 +36,6 @@ class PaymentServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Set up test data
         List<Product> products = new ArrayList<>();
         Product product = new Product();
         product.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
@@ -63,20 +63,20 @@ class PaymentServiceTest {
         assertEquals(order, result.getOrder());
         assertEquals("VOUCHER", result.getMethod());
         assertEquals(paymentData, result.getPaymentData());
-        assertEquals("PENDING", result.getStatus());
+        assertEquals(PaymentStatus.PENDING.getValue(), result.getStatus());
 
         verify(paymentRepository).save(any(Payment.class));
     }
 
     @Test
     void testSetStatusToSuccess() {
-        payment.setStatus("PENDING");
+        payment.setStatus(PaymentStatus.PENDING.getValue());
         when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Payment result = paymentService.setStatus(payment, "SUCCESS");
+        Payment result = paymentService.setStatus(payment, PaymentStatus.SUCCESS.getValue());
 
         assertNotNull(result);
-        assertEquals("SUCCESS", result.getStatus());
+        assertEquals(PaymentStatus.SUCCESS.getValue(), result.getStatus());
         assertEquals("SUCCESS", order.getStatus());
 
         verify(paymentRepository).save(payment);
@@ -84,16 +84,28 @@ class PaymentServiceTest {
 
     @Test
     void testSetStatusToRejected() {
-        payment.setStatus("PENDING");
+        payment.setStatus(PaymentStatus.PENDING.getValue());
         when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Payment result = paymentService.setStatus(payment, "REJECTED");
+        Payment result = paymentService.setStatus(payment, PaymentStatus.REJECTED.getValue());
 
         assertNotNull(result);
-        assertEquals("REJECTED", result.getStatus());
+        assertEquals(PaymentStatus.REJECTED.getValue(), result.getStatus());
         assertEquals("FAILED", order.getStatus());
 
         verify(paymentRepository).save(payment);
+    }
+
+    @Test
+    void testSetStatusInvalid() {
+        payment.setStatus(PaymentStatus.PENDING.getValue());
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            paymentService.setStatus(payment, "INVALID_STATUS");
+        });
+
+        assertTrue(exception.getMessage().contains("Invalid payment status"));
+        verify(paymentRepository, never()).save(any());
     }
 
     @Test

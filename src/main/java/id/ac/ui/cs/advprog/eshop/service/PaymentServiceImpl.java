@@ -3,6 +3,8 @@ package id.ac.ui.cs.advprog.eshop.service;
 import id.ac.ui.cs.advprog.eshop.model.Order;
 import id.ac.ui.cs.advprog.eshop.model.Payment;
 import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
+import enums.PaymentStatus;
+import enums.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,19 +23,23 @@ public class PaymentServiceImpl implements PaymentService {
         String paymentId = UUID.randomUUID().toString();
         Payment payment = new Payment(paymentId, order, method, paymentData);
 
-        payment.setStatus("PENDING");
+        payment.setStatus(PaymentStatus.PENDING.getValue());
 
         return paymentRepository.save(payment);
     }
 
     @Override
     public Payment setStatus(Payment payment, String status) {
+        if (!PaymentStatus.isValid(status)) {
+            throw new IllegalArgumentException("Invalid payment status: " + status);
+        }
+
         payment.setStatus(status);
 
-        if ("SUCCESS".equals(status)) {
-            payment.getOrder().setStatus("SUCCESS");
-        } else if ("REJECTED".equals(status)) {
-            payment.getOrder().setStatus("FAILED");
+        if (PaymentStatus.SUCCESS.getValue().equals(status)) {
+            payment.getOrder().setStatus(OrderStatus.SUCCESS.getValue());
+        } else if (PaymentStatus.REJECTED.getValue().equals(status)) {
+            payment.getOrder().setStatus(OrderStatus.FAILED.getValue());
         }
 
         return paymentRepository.save(payment);
