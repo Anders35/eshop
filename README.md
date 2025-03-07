@@ -54,3 +54,11 @@ After reviewing my implementation for the new features, I have applied several c
 2. By applying SOLID principles, the code is now more maintainable because each controller has a clear and different responsibility. If I need to modify how car operations work, I only need to look at `CarController` without worrying about affecting product operations. The code is also more extensible. I can add new controllers or modify existing ones without changing other parts of the application.
 
 3. Without applying SOLID principles, modifying one class might unintentionally affect another. Testing would be more difficult because of the inherited dependencies. Additionally, the code would be less readable and harder to understand. That makes it more challenging for other people to work on the project. For example, in the original code, it wasn't immediately clear why `CarController` needed to extend `ProductController`.
+
+## Tutorial 4
+
+### Reflection
+
+1. The TDD flow I followed was highly valuable. It helped clarify the required functionality before writing the actual implementation. By writing tests first, I defined the PaymentService's interface and behavior explicitly which guided my implementation. The RED phase forced me to think about what our code should do, the GREEN phase focused on making it work correctly, and the refactoring phase improved the design without fear of breaking functionality.
+
+2. My tests generally follow the F.I.R.S.T. principles even though there's room for improvement. For Fast, my unit tests don't interact with databases or external services which make them quick to execute. For Independent, each test method stands alone and doesn't depend on the state from other tests. For Repeatable, my tests use mocks and don't rely on external state which make them consistently reproducible. For Self-validating, each test has clear assertions that either pass or fail without ambiguity. For Timely, I wrote tests before implementation as per TDD. 
