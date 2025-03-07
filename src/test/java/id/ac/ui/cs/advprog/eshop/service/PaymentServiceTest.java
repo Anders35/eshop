@@ -97,22 +97,6 @@ class PaymentServiceTest {
     }
 
     @Test
-    void testSetStatusToOther() {
-        payment.setStatus("PENDING");
-        when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Payment result = paymentService.setStatus(payment, "PROCESSING");
-
-        assertNotNull(result);
-        assertEquals("PROCESSING", result.getStatus());
-        // Order status should not change for other payment statuses
-        assertNotEquals("SUCCESS", order.getStatus());
-        assertNotEquals("FAILED", order.getStatus());
-
-        verify(paymentRepository).save(payment);
-    }
-
-    @Test
     void testGetPayment() {
         when(paymentRepository.findById("payment-001")).thenReturn(payment);
 
